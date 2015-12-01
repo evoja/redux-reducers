@@ -1,6 +1,6 @@
 {
   "name": "@evoja/redux-reducers",
-  "version": "0.0.0-s",
+  "version": "0.0.0-s0",
   "license": "MIT",
   "repository": "git@github.com:evoja/redux-reducers.git",
 
@@ -8,12 +8,13 @@
   "files": ["lib", "LICENSE", "README.md"],
 
   "scripts": {
-    "prepublish": "npm run build-tests && npm run test",
+    "mypublish": "npm test && npm publish --access public",
 
     "build": "babel src --out-dir lib",
     "build-tests": "npm run build && copyfiles -u 1 lib/**/*.js out && babel test --out-dir out",
     "watch": "babel src test --watch --out-dir out --source-maps",
-    "test": "nodeunit out/tests",
+    "test": "npm run build-tests && npm run just-test",
+    "just-test": "nodeunit out/tests",
 
     "prebuild-browser-test": "npm run build-tests",
     "build-browser-test": "browserify -d \"out/test-browser.js\" > out/test/index.js",

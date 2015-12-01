@@ -1,1 +1,1 @@
-README.md
+# redux-reducers [![npm version](https://badge.fury.io/js/%40evoja%2Fredux-reducers.svg)](https://badge.fury.io/js/%40evoja%2Fredux-reducers) [![Build Status](https://travis-ci.org/evoja/redux-reducers.png)](https://travis-ci.org/evoja/redux-reducers)
