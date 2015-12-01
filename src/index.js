@@ -1,4 +1,3 @@
 'use strict'
-var me = module.exports;
-
-
+var {wrapEvReducer, createComplexEvReducer, chainReducers} = require('./reducers.js')
+module.exports = {wrapEvReducer, createComplexEvReducer, chainReducers}

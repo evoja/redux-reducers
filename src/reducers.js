@@ -165,29 +165,6 @@ me.createReducer = (extrep, actionTypes, defaultData, fun) => {
 
 
 
-/**
- * Combine array of reducers
- */
-me.chainReducers = function chainReducers(reducers) {
-  return function chainReducer(state, action) {
-    return reducers.reduce((st, reducer) => reducer(st, action), state)
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -215,6 +192,53 @@ me.chainEvReducers = function chainEvReducers(reducers, defaultState) {
 
   return me.createEvReducer(conf)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+function isEvReducer(reducer) {
+  return reducer.isEv
+};
+
+/**
+ * Combine array of reducers.
+ * If every reducer is an evReducer result is also an evReducer.
+ */
+me.chainReducers = function chainReducers(reducers) {
+  if (reducers.every(isEvReducer)) {
+    return me.chainEvReducers(reducers)
+  }
+
+  return function chainReducer(state, action) {
+    return reducers.reduce((st, reducer) => reducer(st, action), state)
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 me.NoFunctionError = function(message) {
@@ -245,8 +269,7 @@ function throwNoFunctionError(message) {
  * [[extrep1, actionTypes1, fun1, defaultData1],
  *  [extrep2, actionTypes2, fun2, defaultData2]]
  */
-me.createComplexEvReducer = function createComplexReducer() {
-  var [a0, a1] = arguments;
+me.createComplexEvReducer = function createComplexReducer(a0, a1) {
   var [defaultState, confArr] =
       arguments.length == 1 ? [undefined, a0]  // createComplexReducer(confArr)
     : Array.isArray(a0) && !Array.isArray(a1) ? [a1, a0] // createComplexReducer(confArr, defaultState)

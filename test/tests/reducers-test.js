@@ -51,9 +51,28 @@ exports.test_chainReducers = function(test) {
     test.equal(x, expected)
     return x + 1
   }
-  test.expect(5)
+  test.expect(19)
+
   var chain = chainReducers([getRd(1), getRd(2), getRd(3), getRd(4)])
   test.equal(chain(1), 5)
+  test.equal(chain.isEv, undefined)
+
+  var getEvRd = (expected) =>
+    createReducer('', 'a', 0, (x) => {
+      test.equal(x, expected)
+      return x + 1
+    })
+
+  var evChain = chainReducers([getEvRd(1), getEvRd(2), getEvRd(3), getEvRd(4)])
+  test.equal(evChain(1, {type: 'a'}), 5)
+  test.equal(evChain(1, {type: 'b'}), 1)
+  test.equal(evChain.isEv, true)
+
+  var mixChain = chainReducers([getRd(1), getEvRd(2)])
+  test.equal(mixChain(1, {type: 'a'}), 3)
+  test.equal(mixChain(1, {type: 'b'}), 2)
+  test.equal(mixChain.isEv, undefined)
+
   test.done()
 }
 
@@ -355,5 +374,7 @@ exports.test_wrapEvReducer = function(test) {
 
   test.done()
 }
+
+
 
 
