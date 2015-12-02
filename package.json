@@ -10,11 +10,14 @@
   "scripts": {
     "mypublish": "npm test && npm publish --access public",
 
-    "build": "babel src --out-dir lib",
+    "clean": "rm -rf lib && rm -rf out",
+    "build": "babel src --out-dir lib && mkdir -p out",
     "build-tests": "npm run build && copyfiles -u 1 lib/**/*.js out && babel test --out-dir out",
     "watch": "babel src test --watch --out-dir out --source-maps",
     "test": "npm run build-tests && npm run just-test",
     "just-test": "nodeunit out/tests",
+    "prebrowserify": "npm run build",
+    "browserify": "browserify \"lib/for-browser.js\" > out/redux-reducers.js",
 
     "prebuild-browser-test": "npm run build-tests",
     "build-browser-test": "browserify -d \"out/test-browser.js\" > out/test/index.js",
