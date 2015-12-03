@@ -250,13 +250,14 @@ exports.test_createComplexEvReducer_bigDefault = function(test) {
     return x + 1
   }
 
-  test.expect(26)
+  test.expect(28)
   var origState = {m: 0, c: [1, 0]}
   var defaultState = {m: 0, c: [1, 0]}
   var rd = createComplexEvReducer(defaultState, [
       ['{a}', ['a', 'b'], getRd(0)],
       ['{a}', 'a', getRd(1)],
-      ['c.{b}', 'b', getRd(0)]
+      ['c.{b}', 'b', getRd(0)],
+      ['', 'd', (st, action) => {return {...st, x: 10}}]
     ])
   var result = rd(undefined, {type: 'a', payload: {a: 'm'}})
   test.deepEqual(defaultState, origState, 'state must not change')
@@ -267,6 +268,10 @@ exports.test_createComplexEvReducer_bigDefault = function(test) {
   test.deepEqual(defaultState, origState, 'state must not change')
   test.deepEqual(result, {m: 1, c: [1, 1]})
   test.equal(count, 4)
+
+  result = rd(undefined, {type: 'd'})
+  test.deepEqual(defaultState, origState, 'state must not change')
+  test.deepEqual(result, {m: 0, c: [1, 0], x: 10})
 
   // test defaults
   rd = createComplexEvReducer(defaultState, [

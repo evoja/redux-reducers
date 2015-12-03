@@ -61,7 +61,7 @@ me.createEvReducer = function(conf) {
           if (e instanceof ActionToNamespaceException) {
             return st
           } else {
-            throw Error('Error reducing' + e, e)
+            throw Error('Error reducing. ' + e.stack, e)
           }
         }
         return data
@@ -101,7 +101,7 @@ function wrapDefaultState(replacer, defaultData) {
     if (e instanceof ActionToNamespaceException) {
       return {}
     }
-    throw Error('Error wrapping default ' + e, e)
+    throw Error('Error wrapping default. ' + e.stack, e)
   }
 }
 
@@ -152,6 +152,9 @@ me.createReducer = (extrep, actionTypes, defaultData, fun) => {
     } else {
       throw e
     }
+  }
+  if (defaultState === undefined) {
+    defaultState = {}
   }
   return me.createEvReducer({types, defaultState, anyType})
 }
