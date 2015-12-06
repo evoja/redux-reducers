@@ -30,7 +30,7 @@ exports.test_createEvReducer_action_exists = function(test) {
 }
 
 exports.test_createReducer = function(test) {
-  var rd = createReducer('m.{x}', 'a', 1, x => x+1)
+  var rd = createReducer('m.{payload.x}', 'a', 1, x => x+1)
   test.deepEqual(rd.conf.defaultState, {})
   test.deepEqual(rd.conf.anyType, [])
   test.deepEqual(Object.keys(rd.conf.types), ['a'])
@@ -84,9 +84,9 @@ exports.test_createComplexEvReducer = function(test) {
     return x + 1
   }
   var rd = createComplexEvReducer([
-    ['{a}', ['a', 'b'], 0, getRd(0)],
-    ['{a}', 'a', 0, getRd(1)],
-    ['c.{b}', 'b', 0, getRd(0)]
+    ['{payload.a}', ['a', 'b'], 0, getRd(0)],
+    ['{payload.a}', 'a', 0, getRd(1)],
+    ['c.{payload.b}', 'b', 0, getRd(0)]
   ])
 
   test.expect(32)
@@ -144,15 +144,15 @@ exports.test_createComplexEvError = function(test) {
     return x + 1
   }
   test.throws(() => createComplexEvReducer([
-      ['{a}', ['a', 'b'], 0, getRd(0)],
-      ['{a}', 'a', 0],
-      ['c.{b}', 'b', 0, getRd(0)]
+      ['{payload.a}', ['a', 'b'], 0, getRd(0)],
+      ['{payload.a}', 'a', 0],
+      ['c.{payload.b}', 'b', 0, getRd(0)]
     ], NoFunctionError, 'must throw error' ))
 
   test.doesNotThrow(() => createComplexEvReducer([
-      ['{a}', ['a', 'b'], getRd(0)],
-      ['{a}', 'a', getRd(0)],
-      ['c.{b}', 'b', getRd(0)]
+      ['{payload.a}', ['a', 'b'], getRd(0)],
+      ['{payload.a}', 'a', getRd(0)],
+      ['c.{payload.b}', 'b', getRd(0)]
     ], 'must not throw error'))
 
   test.done()
@@ -173,9 +173,9 @@ exports.test_createComplexEvReducer_noDefaults = function(test) {
   test.expect(38)
 
   var rd = createComplexEvReducer([
-    ['{a}', ['a', 'b'], getRd(0)],
-    ['{a}', 'a', getRd(1)],
-    ['c.{b}', 'b', getRd(0)]
+    ['{payload.a}', ['a', 'b'], getRd(0)],
+    ['{payload.a}', 'a', getRd(1)],
+    ['c.{payload.b}', 'b', getRd(0)]
   ])
   var origState = {m: 0, c: [1, 0]}
   var state = {m: 0, c: [1, 0]}
@@ -195,14 +195,14 @@ exports.test_createComplexEvReducer_noDefaults = function(test) {
     ['{a}', 'a', getRd(NaN)],
     ['c.{b}', 'b', getRd(undefined)]
   ])
-  result = rd(state, {type: 'a', payload: {a: 'n'}})
+  result = rd(state, {type: 'a', a: 'n'})
   test.deepEqual(state, origState, 'state must not change')
   test.ok(isNaN(result.n), 'result.n must be NaN but was ' + result.n)
   result.n = 0
   test.deepEqual(result, {m: 0, n: 0, c: [1, 0]})
   test.equal(count, 6)
 
-  result = rd(state, {type: 'b', payload: {a: 'n', b: 2}})
+  result = rd(state, {type: 'b', a: 'n', b: 2})
   test.deepEqual(state, origState, 'state must not change')
   test.ok(isNaN(result.n), 'result.n must be NaN but was ' + result.n)
   result.n = 0
@@ -212,18 +212,18 @@ exports.test_createComplexEvReducer_noDefaults = function(test) {
   test.equal(count, 8)
 
   // test not changed
-  var result = rd(state, {type: 'c', payload: {a: 'm'}})
+  var result = rd(state, {type: 'c', a: 'm'})
   test.strictEqual(result, state, 'state must not change')
   test.equal(count, 8)
 
   // test defaults
-  result = rd(undefined, {type: 'a', payload: {a: 'n'}})
+  result = rd(undefined, {type: 'a', a: 'n'})
   test.ok(isNaN(result.n), 'result.n must be NaN but was ' + result.n)
   result.n = 0
   test.deepEqual(result, {n: 0})
   test.equal(count, 10)
 
-  result = rd(undefined, {type: 'b', payload: {a: 'n', b: 2}})
+  result = rd(undefined, {type: 'b', a: 'n', b: 2})
   test.ok(isNaN(result.n), 'result.n must be NaN but was ' + result.n)
   result.n = 0
   test.ok(isNaN(result.c[2]), 'result.c[2] must be NaN but was ' + result.c[2])
@@ -231,7 +231,7 @@ exports.test_createComplexEvReducer_noDefaults = function(test) {
   test.deepEqual(result, {n: 0, c: {'2': 0}})
   test.equal(count, 12)
 
-  var result = rd(undefined, {type: 'c', payload: {a: 'm'}})
+  var result = rd(undefined, {type: 'c', a: 'm'})
   test.deepEqual(result, {})
   test.equal(count, 12)
 
@@ -254,9 +254,9 @@ exports.test_createComplexEvReducer_bigDefault = function(test) {
   var origState = {m: 0, c: [1, 0]}
   var defaultState = {m: 0, c: [1, 0]}
   var rd = createComplexEvReducer(defaultState, [
-      ['{a}', ['a', 'b'], getRd(0)],
-      ['{a}', 'a', getRd(1)],
-      ['c.{b}', 'b', getRd(0)],
+      ['{payload.a}', ['a', 'b'], getRd(0)],
+      ['{payload.a}', 'a', getRd(1)],
+      ['c.{payload.b}', 'b', getRd(0)],
       ['', 'd', (st, action) => {return {...st, x: 10}}]
     ])
   var result = rd(undefined, {type: 'a', payload: {a: 'm'}})
@@ -279,14 +279,14 @@ exports.test_createComplexEvReducer_bigDefault = function(test) {
       ['{a}', 'a', getRd(NaN)],
       ['c.{b}', 'b', getRd(undefined)]
     ])
-  result = rd(undefined, {type: 'a', payload: {a: 'n'}})
+  result = rd(undefined, {type: 'a', a: 'n'})
   test.deepEqual(defaultState, origState, 'state must not change')
   test.ok(isNaN(result.n), 'result.n must be NaN but was ' + result.n)
   result.n = 0
   test.deepEqual(result, {m: 0, n: 0, c: [1, 0]})
   test.equal(count, 6)
 
-  result = rd(undefined, {type: 'b', payload: {a: 'n', b: 2}})
+  result = rd(undefined, {type: 'b', a: 'n', b: 2})
   test.deepEqual(defaultState, origState, 'state must not change')
   test.ok(isNaN(result.n), 'result.n must be NaN but was ' + result.n)
   result.n = 0
@@ -296,7 +296,7 @@ exports.test_createComplexEvReducer_bigDefault = function(test) {
   test.equal(count, 8)
 
   // test not changed
-  var result = rd(undefined, {type: 'c', payload: {a: 'm'}})
+  var result = rd(undefined, {type: 'c', a: 'm'})
   test.deepEqual(defaultState, origState, 'state must not change')
   test.strictEqual(result, defaultState, 'state must be default')
   test.equal(count, 8)

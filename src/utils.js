@@ -74,15 +74,15 @@ me.ActionToNamespaceException = function ActionToNamespaceException(message, act
   Error.apply(this, arguments)
 }
 
-me.actionToNamespace = (template) => ({payload}) => {
-  return (template.match(/\{\w+\}/g) || []) // => ['{a}, {b.c}']
+me.actionToNamespace = (template) => (action) => {
+  return (template.match(/\{\w+(?:\.\w+)*\}/g) || []) // => ['{a}, {b.c}']
     .map(me.comp(
         (str) => str.substring(1, str.length -1), // => ['a', 'b.c']
-        (name) => ['{' + name + '}', me.namespace(name, payload, true)] // => [['{a}', payload.a], ['{b.c}', payload.b.c]]
+        (name) => ['{' + name + '}', me.namespace(name, action, true)] // => [['{a}', action.a], ['{b.c}', action.b.c]]
       )) 
     .reduce(function(tpl, [ptr, val]) {
         if (typeof val != 'string' && typeof val != 'number') {
-         throw new me.ActionToNamespaceException('action does not match to template ' + payload + ', ' + template)
+         throw new me.ActionToNamespaceException('action does not match to template ' + action + ', ' + template)
         }
         return tpl.replace(new RegExp(ptr, 'g'), val)
       },
