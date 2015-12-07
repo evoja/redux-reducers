@@ -5,7 +5,7 @@
   "repository": "git@github.com:evoja/redux-reducers.git",
 
   "main": "lib/index.js",
-  "files": ["lib", "LICENSE", "README.md"],
+  "files": ["lib"],
 
   "scripts": {
     "mypublish": "npm test && npm publish --access public",
