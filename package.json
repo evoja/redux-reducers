@@ -19,7 +19,7 @@
     "prebrowserify": "npm run build",
     "browserify": "browserify \"lib/for-browser.js\" > out/redux-reducers.js",
 
-    "prebuild-browser-test": "npm run build-tests",
+    "prebuild-browser-test": "npm run build-tests && mkdir -p out/test",
     "build-browser-test": "browserify -d \"out/test-browser.js\" > out/test/index.js",
     "postbuild-browser-test": "copyfiles -u 1 test/index.html out/test"
   },
