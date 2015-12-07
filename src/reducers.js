@@ -169,6 +169,32 @@ me.createReducer = (extrep, actionTypes, defaultData, fun) => {
 
 
 
+/**
+ * Recursive merge of default states. 
+ * The main aim is extend undefined parts of state
+ * but don't change existing parts.
+ */
+me.mergeDefaultState = function mergeDefaultState(prev, next) {
+  if (prev === undefined) {
+    return next
+  }
+  if (prev === null
+      || Array.isArray(prev)
+      || typeof prev !== 'object') {
+    return prev
+  }
+  if (typeof next !== 'object') {
+    return prev
+  }
+  if (Object.keys(next).length == 0) {
+    return prev
+  }
+  var result = {...prev}
+  for (var k in next) {
+    result[k] = mergeDefaultState(prev[k], next[k])
+  }
+  return result
+}
 
 
 /**
@@ -178,18 +204,17 @@ me.chainEvReducers = function chainEvReducers(reducers, defaultState) {
   evAssert(Array.isArray(reducers), '`reducers` must be an array: ' + reducers)
 
   var conf = {
-    defaultState: defaultState !== undefined ? defaultState
-      : reducers.length > 0 ? reducers[0].conf.defaultState
-      : {},
+    defaultState: defaultState !== undefined ? defaultState : {},
     types: {},
     anyType: []
   }
-  reducers.forEach(function({conf: {types, anyType}}) {
+  reducers.forEach(function({conf: {types, anyType, defaultState}}) {
     for (var type in types) {
       conf.types[type] = conf.types[type]
         ? conf.types[type].concat(types[type])
         : types[type]
     }
+    conf.defaultState = me.mergeDefaultState(conf.defaultState, defaultState)
     conf.anyType = conf.anyType.concat(anyType)
   })
 

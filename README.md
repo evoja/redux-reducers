@@ -90,20 +90,20 @@ That means it call only necessary subreducers matching type of the action.
 #### Examples
 
 ```js
-var r1 = createComplexEvReducer({m: 5}, [
+var r1 = createComplexEvReducer({m: 5, k: 10}, [
   ['m', 'INC_M', x => x + 1],
 ])
-var r2 = createComplexEvReducer({n: 50}, [
+var r2 = createComplexEvReducer({n: 50, k: 20}, [
   ['n', ['INC_M', 'DEC_N'], x => x - 1],
 ])
 
 var reducer = chainReducers([r1, r2])
 
 reducer(undefined, {type: 'SOME_TYPE'})
-// => {m: 5}
+// => {m: 5, n: 50, k: 10}
 
 reducer(undefined, {type: 'INC_M'})
-// => {m: 6, n: NaN}
+// => {m: 6, n: 49, k: 10}
 
 reducer({m: 5, n: 10}, {type: 'INC_M'})
 // => {m: 6, n: 9}

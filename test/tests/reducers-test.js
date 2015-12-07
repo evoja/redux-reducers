@@ -3,7 +3,7 @@
 var tl = require('../test-lib.js')
 var {createEvReducer, createReducer, chainReducers,
     createComplexEvReducer, NoFunctionError, NoDefaultStateError,
-    wrapEvReducer
+    wrapEvReducer, mergeDefaultState
   } = tl.require('reducers.js')
 
 exports.test_createEvReducer_action_exists = function(test) {
@@ -73,6 +73,21 @@ exports.test_chainReducers = function(test) {
   test.equal(mixChain(1, {type: 'b'}), 2)
   test.equal(mixChain.isEv, undefined)
 
+  test.done()
+}
+
+exports.test_chain_combines_default = function(test) {
+  var r1 = createComplexEvReducer({m: 5, k: 10}, [
+    ['m', 'INC_M', x => x + 1],
+  ])
+  var r2 = createComplexEvReducer({n: 50, k: 20}, [
+    ['n', ['INC_M', 'DEC_N'], x => x - 1],
+  ])
+
+  var reducer = chainReducers([r1, r2])
+
+  test.deepEqual(reducer(undefined, {type: 'SOME_TYPE'}), {m: 5, n:50, k: 10})
+  test.deepEqual(reducer(undefined, {type: 'INC_M'}), {m: 6, n: 49, k: 10})
   test.done()
 }
 
@@ -380,6 +395,42 @@ exports.test_wrapEvReducer = function(test) {
   test.done()
 }
 
+
+exports.test_mergeDefaultState = function(test) {
+  var state = {
+    a: {
+      b: {c: 10, d: 20, m: null, n: undefined},
+      e: {j: 30}
+    },
+    f: {g: 40},
+    h: 50
+  }
+  
+  var other = {
+    a: {
+      b: {c: 100, i: 200, m: 400, n: {o: 500}}
+    },
+    f: 10,
+    k: {l: 300}
+  }
+  
+  var res = mergeDefaultState(state, other)
+  test.deepEqual(res, {
+    a: {
+      b: {c: 10, d: 20, i: 200, m: null, n: {o: 500}},
+      e: {j: 30}
+    },
+    f: {g: 40},
+    h: 50,
+    k: {l: 300}
+  })
+  
+  test.strictEqual(state.a.e, res.a.e)
+  test.strictEqual(state.f, res.f)
+  test.strictEqual(other.k, res.k)
+  test.strictEqual(other.a.b.n, res.a.b.n)
+  test.done()
+}
 
 
 
