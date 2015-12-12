@@ -1,8 +1,8 @@
 'use strict';
 var tl = require('../test-lib.js')
-var {createReplacer, createExtractor, cloneSubState, actionToNamespace,
+var {createReplacer, createExtractor, actionToNamespace,
      ActionToNamespaceException,
-     evAssert, comp, namespace
+     evAssert, comp
   } = tl.require('utils.js')
 
 
@@ -20,27 +20,6 @@ exports.test_comp = function(test) {
   var fun = comp(sq, doub, sq)
   test.equal(fun(2), 64)
   test.done()
-}
-
-exports.test_namespace = function(test) {
-  var obj = {}
-  var x = namespace('a.b', obj)
-  test.deepEqual(obj, {a:{b:{}}})
-  test.strictEqual(obj.a.b, x)
-
-  var y = namespace('a', obj)
-  test.strictEqual(y, obj.a)
-
-  var z = namespace('x.y', obj, true)
-  test.deepEqual(obj, {a:{b:{}}})
-  test.strictEqual(z, undefined)
-
-  test.done()
-}
-
-exports.test_cloneSubState = function(test) {
- test.deepEqual({m: 2, n: 1}, cloneSubState('m', {m: 1, n: 1}, 2))
- test.done()
 }
 
 
