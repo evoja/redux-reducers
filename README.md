@@ -47,7 +47,7 @@ reducer({m: 100, c: [10, 20]}, {type: 'INC_C', payload: {a: 1}})
 //   m: 100,
 //   c: [10, 21]
 // }
-
+```
 
 
 ### wrapEvReducer
