@@ -40,7 +40,7 @@
   },
 
   "dependencies": {
-    "@evoja/ns-plain": "0.0.0-s1"
+    "@evoja/ns-plain": "0.0.0"
   },
 
   "//devDependencies": {
