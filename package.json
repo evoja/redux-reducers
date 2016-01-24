@@ -1,6 +1,8 @@
 {
   "name": "@evoja/redux-reducers",
-  "version": "0.0.1-s0",
+  "version": "0.0.1",
+  "description": "Helper functions of creating reducers",
+  "author": "chivorotkiv <chivorotkiv@omich.net>",
   "license": "MIT",
   "repository": "git@github.com:evoja/redux-reducers.git",
 
