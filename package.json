@@ -1,6 +1,6 @@
 {
   "name": "@evoja/redux-reducers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Helper functions of creating reducers",
   "author": "chivorotkiv <chivorotkiv@omich.net>",
   "license": "MIT",
@@ -19,10 +19,10 @@
     "test": "npm run build-tests && npm run just-test",
     "just-test": "nodeunit out/tests",
     "prebrowserify": "npm run build",
-    "browserify": "browserify \"lib/for-browser.js\" > out/redux-reducers.js",
+    "browserify": "browserify -t require-globify \"lib/for-browser.js\" > out/redux-reducers.js",
 
     "prebuild-browser-test": "npm run build-tests && mkdir -p out/test",
-    "build-browser-test": "browserify -d \"out/test-browser.js\" > out/test/index.js",
+    "build-browser-test": "browserify -t require-globify -d \"out/test-browser.js\" > out/test/index.js",
     "postbuild-browser-test": "copyfiles -u 1 test/index.html out/test"
   },
 
@@ -31,18 +31,12 @@
     "plugins": ["transform-object-rest-spread"]
   },
 
-  "browserify": {
-    "transform": [
-      ["require-globify"]
-    ]
-  },
-
   "//dependencies": {
     "@evoja/ns-plain": "Work with deep sub-objects"
   },
 
   "dependencies": {
-    "@evoja/ns-plain": "0.0.0"
+    "@evoja/ns-plain": "0.0.1"
   },
 
   "//devDependencies": {
