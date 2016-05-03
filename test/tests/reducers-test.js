@@ -5,6 +5,7 @@ var {createEvReducer, createReducer, chainReducers,
     createComplexEvReducer, NoFunctionError, NoDefaultStateError,
     wrapEvReducer, mergeDefaultState
   } = tl.require('reducers.js')
+var {ActionToNamespaceException} = tl.require('utils.js')
 
 exports.test_createEvReducer_action_exists = function(test) {
   var rd = createEvReducer({
@@ -89,6 +90,20 @@ exports.test_chain_combines_default = function(test) {
   test.deepEqual(reducer(undefined, {type: 'SOME_TYPE'}), {m: 5, n:50, k: 10})
   test.deepEqual(reducer(undefined, {type: 'INC_M'}), {m: 6, n: 49, k: 10})
   test.done()
+}
+
+exports.test_createComplexEvReducer_reducing_errors = function(test) {
+  var rd = createComplexEvReducer([
+    ['{payload.a}', ['a', 'b'], 0, () => 1],
+  ])
+
+  test.expect(1)
+
+  test.throws(() => rd(undefined, {type: 'a', payload: {a: null}}),
+    ActionToNamespaceException,
+    'must throw ActionToNamespaceException because action does not contain fields mentioned in template')
+
+  test.done();
 }
 
 exports.test_createComplexEvReducer = function(test) {

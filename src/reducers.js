@@ -59,7 +59,7 @@ me.createEvReducer = function(conf) {
           data = replacer(st, data, action)
         } catch (e) {
           if (e instanceof ActionToNamespaceException) {
-            return st
+            throw e
           } else {
             throw Error('Error reducing. ' + e.stack, e)
           }
