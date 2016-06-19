@@ -3,9 +3,14 @@ All notable changes to this project will be documented in this file.
 
 #### [Unreleased][unreleased]
 ##### --
-* update @evoja/ns-plain dependency that allows us to have '.' and '\' in keys that comes from actions. That means 'a.{b}.c' works for any {b}.
+
 
 ### 0.0
+
+#### [0.0.4] - [2016-06-19][c-0.0.4]
+##### Updated
+* Update @evoja/ns-plain dependency that allows us to have '.' and '\' in keys that comes from actions. That means 'a.{b}.c' works for any {b}.
+* Pass full state as third argument to reducer.
 
 #### [0.0.3] - [2016-05-04][c-0.0.3]
 ##### Fixed
@@ -27,7 +32,9 @@ Use [@evoja/ns-plain](https://www.npmjs.com/package/%2540evoja%2Fns-plain) inste
 ------------
 Changelog file follows [this convention](http://keepachangelog.com/)
 
-[unreleased]: https://github.com/evoja/redux-reducers/compare/0.0.3...master
+[unreleased]: https://github.com/evoja/redux-reducers/compare/0.0.4...master
+[c-0.0.4]: https://github.com/evoja/redux-reducers/compare/0.0.3...0.0.4
+[0.0.4]: https://github.com/evoja/redux-reducers/tree/0.0.4
 [c-0.0.3]: https://github.com/evoja/redux-reducers/compare/0.0.2...0.0.3
 [0.0.3]: https://github.com/evoja/redux-reducers/tree/0.0.3
 [c-0.0.2]: https://github.com/evoja/redux-reducers/compare/0.0.1...0.0.2
