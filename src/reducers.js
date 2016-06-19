@@ -55,7 +55,7 @@ me.createEvReducer = function(conf) {
           if (data === undefined) {
             data = defaultData
           }
-          data = fun(data, action)
+          data = fun(data, action, st)
           data = replacer(st, data, action)
         } catch (e) {
           if (e instanceof ActionToNamespaceException) {

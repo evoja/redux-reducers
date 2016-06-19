@@ -19,7 +19,7 @@ Every declaration in array is an array:
 
 **types.** String or array of strings. Set of action types when subreducer must be called.
 
-**subreducer.** Function(substate, action).
+**subreducer.** Function(substate, action, fullstate).
 
 #### Examples
 
@@ -27,7 +27,8 @@ Every declaration in array is an array:
 var defaultState = {m: 5, c: [1, 0]}
 var reducer = createComplexEvReducer(defaultState, [
   ['m', 'INC_M', x => x + 1],
-  ['c.{payload.a}', ['INC_C', 'INC_M'], x => x + 1]
+  ['c.{payload.a}', ['INC_C', 'INC_M'], x => x + 1],
+  ['c.{payload.a}', 'M_PLUS_C', (x, _, state) => x + state.m],
 ])
 
 reducer(undefined, {type: 'SOME_TYPE'})
@@ -46,6 +47,12 @@ reducer({m: 100, c: [10, 20]}, {type: 'INC_C', payload: {a: 1}})
 // => {
 //   m: 100,
 //   c: [10, 21]
+// }
+
+reducer({m: 100, c: [10, 20]}, {type: 'M_PLUS_C', payload: {a: 1}})
+// => {
+//   m: 100,
+//   c: [10, 120]
 // }
 ```
 
@@ -67,6 +74,7 @@ Wraps reducer processing substate into reducer processing parent state.
 var defaultState = {m: 5}
 var subreducer = createComplexEvReducer(defaultState, [
   ['m', 'INC_M', x => x + 1],
+  ['m', 'A_PLUS_M', (x, _, state) => x + state.a],
 ])
 
 var reducer = wrapEvReducer('sub.st', subreducer)
@@ -79,6 +87,9 @@ reducer(undefined, {type: 'INC_M'})
 
 reducer({sub: {st: {m: 100}}}, {type: 'INC_M'})
 // => {sub: {st: {m: 101}}}
+
+reducer({sub: {st: {m: 100}}, a: 10}, {type: 'A_PLUS_M'})
+// => {sub: {st: {m: 110}}}
 ```
 
 
@@ -91,13 +102,16 @@ That means it call only necessary subreducers matching type of the action.
 
 ```js
 var r1 = createComplexEvReducer({m: 5, k: 10}, [
-  ['m', 'INC_M', x => x + 1],
+  ['m', ['INC_M', 'M_PLUS_N'], x => x + 1],
 ])
 var r2 = createComplexEvReducer({n: 50, k: 20}, [
   ['n', ['INC_M', 'DEC_N'], x => x - 1],
 ])
+var r3 = createComplexEvReducer({n: 50, k: 20}, [
+  ['n', 'M_PLUS_N', (x, _, state) => state.m + x],
+])
 
-var reducer = chainReducers([r1, r2])
+var reducer = chainReducers([r1, r2, r3])
 
 reducer(undefined, {type: 'SOME_TYPE'})
 // => {m: 5, n: 50, k: 10}
@@ -110,5 +124,8 @@ reducer({m: 5, n: 10}, {type: 'INC_M'})
 
 reducer({m: 5, n: 10}, {type: 'DEC_M'})
 // => {m: 5, n: 9}
+
+reducer({m: 5, n: 10}, {type: 'M_PLUS_N'})
+// => {m: 6, n: 16}
 ```
 
