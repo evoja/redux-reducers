@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 #### [Unreleased][unreleased]
 ##### --
-* --
+* update @evoja/ns-plain dependency that allows us to have '.' and '\' in keys that comes from actions. That means 'a.{b}.c' works for any {b}.
 
 ### 0.0
 

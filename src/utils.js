@@ -1,6 +1,6 @@
 'use strict';
 var me = module.exports
-var {access, namespace, assign} = require('@evoja/ns-plain')
+var {access, namespace, assign, escapeKey} = require('@evoja/ns-plain')
 
 /**
  * A quick way to throw message if condition is incorrect
@@ -43,6 +43,9 @@ me.actionToNamespace = (template) => (action) => {
     .reduce(function(tpl, [ptr, val]) {
         if (typeof val != 'string' && typeof val != 'number') {
          throw new me.ActionToNamespaceException('action does not match to template ' + action + ', ' + template)
+        }
+        if (typeof val == 'string') {
+          val = escapeKey(val)
         }
         return tpl.replace(new RegExp(ptr, 'g'), val)
       },

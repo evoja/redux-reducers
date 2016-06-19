@@ -26,15 +26,22 @@ exports.test_comp = function(test) {
 exports.test_actionToNamespace = function(test) {
   var aton = actionToNamespace('m.{payload.a.cx.cy}.{payload.b}')
   test.ok(typeof aton == 'function')
-  test.deepEqual('m.a1.b1', aton({payload: {a: {cx: {cy: 'a1'}}, b: 'b1'}}))
+  test.strictEqual('m.a1.b1', aton({payload: {a: {cx: {cy: 'a1'}}, b: 'b1'}}))
   test.done()
 }
 
+exports.test_actionToNamespace_periods = function(test) {
+  var aton = actionToNamespace('m.{payload.a.cx.cy}.{payload.b}')
+  test.ok(typeof aton == 'function')
+  test.strictEqual('m.a\\.1.b\\.\\\\1', aton({payload: {a: {cx: {cy: 'a.1'}}, b: 'b.\\1'}}))
+  test.done()
+}
 
 exports.test_createExtractor = function(test) {
   var extract = createExtractor('a.{payload.b}.c')
-  test.equal(extract({a: {m: {c: 5}}}, {payload: {b: 'm'}}), 5)
-  test.equal(extract({a: [{c: 3}, {c: 4}]}, {payload: {b: 1}}), 4)
+  test.strictEqual(extract({a: {m: {c: 5}}}, {payload: {b: 'm'}}), 5)
+  test.strictEqual(extract({a: [{c: 3}, {c: 4}]}, {payload: {b: 1}}), 4)
+  test.strictEqual(extract({a: {'m.': {c: 5}}}, {payload: {b: 'm.'}}), 5)
 
   var same = createExtractor('')
   var obj = {}
@@ -51,6 +58,10 @@ exports.test_createReplacer = function(test) {
   var rp_componentId = createReplacer('m.{payload.componentId}')
   test.deepEqual({m: {x: 2}}, rp_componentId({}, 2, {payload: {componentId: 'x'}}))
   test.deepEqual({m: {'1': 2}}, rp_componentId({}, 2, {payload: {componentId: 1}}))
+  test.deepEqual({m: {'x.': 2}}, rp_componentId({}, 2, {payload: {componentId: 'x.'}}))
+  test.deepEqual({m: {'x.\\.': 2}}, rp_componentId({}, 2, {payload: {componentId: 'x.\\.'}}))
+  test.strictEqual(2, rp_componentId({}, 2, {payload: {componentId: 'x.\\.'}}).m['x.\\.'])
   test.throws(() => rp_componentId({}, 2, {}), ActionToNamespaceException)
+
   test.done()
 }
